@@ -237,6 +237,12 @@ input, textarea, select { font-family: inherit; }
 .ptag { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-strong); background: var(--bg); color: var(--text-2); font-size: 12px; cursor: pointer; transition: all 0.15s; }
 .ptag.selected { background: var(--green-light); color: var(--green-dark); border-color: var(--green-mid); font-weight: 500; }
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://tesmrgutcohphpvfqesv.supabase.co/rest/v1/'
+  const SUPABASE_KEY = 'sb_publishable_3yI-rX7V02zS9Pidcc8vDw_N5TSz3J9'
+  const supabaseClient = window.supabase.createClient(https://tesmrgutcohphpvfqesv.supabase.co/rest/v1/, sb_publishable_3yI-rX7V02zS9Pidcc8vDw_N5TSz3J9)
+</script>
 </head>
 <body>
 
@@ -1198,11 +1204,23 @@ function generateUID() {
   const num = String(Math.floor(Math.random() * 99999)).padStart(5, '0');
   return 'CIS-' + year + '-' + num;
 }
-function doRegister() {
+async function doRegister( ) {
   const fn = document.getElementById('reg-fname').value || 'User';
   const ln = document.getElementById('reg-lname').value || '';
   userName = fn + ' ' + ln;
   const uid = generateUID();
+  await supabaseClient
+  .from('candidates')
+  .insert({
+    career_id: uid,
+    full_name: userName,
+    email: document.getElementById('reg-email').value,
+    role: document.getElementById('reg-role').value,
+    university: document.getElementById('reg-org').value,
+    location: 'Malaysia',
+    years_experience: 0,
+    expected_salary: 0
+  })
   // Capture selected fields
   const fields = [...document.querySelectorAll('.fchip.selected')].map(c=>c.dataset.field);
   window.userFields = fields;
