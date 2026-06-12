@@ -36,7 +36,7 @@
     #landing { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; background: var(--bg); position: relative; overflow: hidden; }
     #landing::before { content: ''; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,153,181,0.08) 0%, transparent 70%); top: -100px; right: -100px; pointer-events: none; }
     .landing-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 3rem; }
-    .landing-logo-icon { width: 52px; height: 52px; background: var(--green); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,153,181,0.35); }
+    .landing-logo-icon { width: 52px; height: 52px; background: var(--green); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,153,181,0.2); }
     .landing-logo-icon svg { width: 28px; height: 28px; }
     .landing-title { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-2); }
     .landing-hero { text-align: center; max-width: 520px; margin-bottom: 3rem; }
@@ -77,7 +77,7 @@
     .uid-display .uid-label { font-size: 11px; color: var(--green-dark); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
     .uid-display .uid-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--green); }
     .role-tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; }
-    .role-tab { flex: 1; padding: 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; background: var(--bg); color: var(--text-2); cursor: pointer; transition: all 0.15s; }
+    .role-tab { flex: 1; padding: 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; background: var(--bg); color: var(--text-2); cursor: pointer; transition: all 0.2s; }
     .role-tab.active { background: var(--green); color: #fff; border-color: var(--green); }
     .fchip { font-size: 12px; padding: 5px 10px; border-radius: 20px; border: 1px solid var(--border-strong); background: var(--bg); color: var(--text-2); cursor: pointer; transition: all 0.15s; user-select: none; }
     .fchip.selected { background: var(--green-light); color: var(--green-dark); border-color: var(--green-mid); font-weight: 500; }
@@ -100,7 +100,7 @@
     .sb-item svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
     .sb-user { margin-top: auto; padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
     .sb-user-inner { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg); border-radius: var(--radius-sm); cursor: pointer; }
-    .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--green-dark); flex-shrink: 0; }
+    .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--green-dark); }
     .sb-user-name { font-size: 12px; font-weight: 500; color: var(--text); }
     .sb-user-id { font-size: 10px; color: var(--text-3); font-family: 'DM Mono', monospace; }
     .sb-logout { font-size: 11px; color: var(--text-3); cursor: pointer; margin-left: auto; padding: 2px 6px; border-radius: 4px; }
@@ -173,9 +173,10 @@
     .add-btn:hover { background: #007A96; }
 
     /* ── NOTIFICATION ── */
-    .notif { position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease; z-index: 1000; }
+    .notif { position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease; z-index: 1000; }
     @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
     .notif-green { border-left: 3px solid var(--green); }
+    .notif-red { border-left: 3px solid var(--red); }
     .notif svg { width: 16px; height: 16px; fill: none; stroke: var(--green); stroke-width: 2; flex-shrink: 0; }
   </style>
 </head>
@@ -283,9 +284,9 @@
       <div class="modal-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2z"/><path d="M2 20c0-4 4-7 10-7s10 3 10 7"/></svg></div>
       <div><div style="font-size:15px;font-weight:600;">Sign in to CIS</div></div>
     </div>
-    <div class="form-group"><label class="form-label">Email</label><input class="form-input" placeholder="your@email.com"></div>
-    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="••••••••"></div>
-    <button class="modal-btn" onclick="enterApp('candidate')">Sign in as Candidate</button>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" placeholder="your@email.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-pass" type="password" placeholder="••••••••"></div>
+    <button class="modal-btn" onclick="doLogin('candidate')">Sign in as Candidate</button>
     <div class="modal-switch" style="margin-top:8px;"><a onclick="openModal('modal-employer-login')">Sign in as Employer instead</a></div>
     <div class="modal-switch" style="margin-top:6px;"><a onclick="closeModal('modal-login')">← Back</a></div>
   </div>
@@ -298,9 +299,9 @@
       <div class="modal-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
       <div><div style="font-size:15px;font-weight:600;">Employer Portal</div></div>
     </div>
-    <div class="form-group"><label class="form-label">Company email</label><input class="form-input" placeholder="hr@company.com"></div>
-    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="••••••••"></div>
-    <button class="modal-btn" onclick="enterApp('employer')">Sign in as Employer</button>
+    <div class="form-group"><label class="form-label">Company email</label><input class="form-input" id="emp-email" placeholder="hr@company.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="emp-pass" type="password" placeholder="••••••••"></div>
+    <button class="modal-btn" onclick="doLogin('employer')">Sign in as Employer</button>
     <div class="modal-switch" style="margin-top:6px;"><a onclick="closeModal('modal-employer-login')">← Back</a></div>
   </div>
 </div>
@@ -347,10 +348,10 @@
 
       <div class="sb-user">
         <div class="sb-user-inner">
-          <div class="sb-avatar">AH</div>
+          <div class="sb-avatar" id="user-avatar">AH</div>
           <div>
-            <div class="sb-user-name">Ahmad Haziq</div>
-            <div class="sb-user-id">CIS-2024-00142</div>
+            <div class="sb-user-name" id="user-name">Ahmad Haziq</div>
+            <div class="sb-user-id" id="user-id">CIS-2024-00142</div>
           </div>
           <div class="sb-logout" onclick="logout()">↩</div>
         </div>
@@ -394,11 +395,11 @@
         </div>
         <div class="card" style="margin-bottom:1rem;">
           <div style="display:flex;align-items:center;gap:16px;">
-            <div style="width:56px;height:56px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;">AH</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;" id="portfolio-avatar">AH</div>
             <div style="flex:1;">
-              <div style="font-size:17px;font-weight:700;color:var(--text);">Ahmad Haziq</div>
-              <div style="font-size:13px;color:var(--text-2);">Data Analyst · Universiti Malaya · Kuala Lumpur</div>
-              <div style="margin-top:6px;"><span class="tag tag-green">CIS-2024-00142</span><span class="tag">Open to opportunities</span></div>
+              <div style="font-size:17px;font-weight:700;color:var(--text);" id="portfolio-name">Ahmad Haziq</div>
+              <div style="font-size:13px;color:var(--text-2);" id="portfolio-title">Data Analyst · Universiti Malaya · Kuala Lumpur</div>
+              <div style="margin-top:6px;"><span class="tag tag-green" id="portfolio-cis">CIS-2024-00142</span><span class="tag">Open to opportunities</span></div>
             </div>
           </div>
         </div>
@@ -557,10 +558,19 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // ━━━ SUPABASE SETUP ━━━
+  const SUPABASE_URL = 'https://tesmrgutcohphpvfqesv.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_3yI-rX7V02zS9Pidcc8vDw_N5TSz3J9'
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  // ━━━ STATE ━━━
   let currentRole = 'candidate';
   let selectedFields = [];
+  let currentUser = null;
 
+  // ━━━ ROLE & FIELD SELECTION ━━━
   function selectRole(role) {
     currentRole = role;
     document.getElementById('role-candidate').classList.remove('active');
@@ -583,26 +593,115 @@
     }
   }
 
-  function doRegister() {
+  // ━━━ REGISTRATION ━━━
+  async function doRegister() {
     const fname = document.getElementById('reg-fname').value.trim();
     const lname = document.getElementById('reg-lname').value.trim();
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-pass').value.trim();
 
     if (!fname || !lname || !email || !password) {
-      alert('Please fill all fields');
+      showNotif('Please fill all fields', 'error');
       return;
     }
 
     if (currentRole === 'candidate' && selectedFields.length === 0) {
-      alert('Please select at least one role');
+      showNotif('Please select at least one role', 'error');
       return;
     }
 
-    const careerID = 'CIS-' + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('new-uid').innerText = careerID;
-    closeModal('modal-register');
-    openModal('modal-success');
+    try {
+      // Sign up with Supabase
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+      });
+
+      if (error) throw error;
+
+      const userId = data.user.id;
+      const careerID = 'CIS-' + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000);
+
+      // Insert user profile
+      const { error: dbError } = await supabaseClient
+        .from('users')
+        .insert([{
+          id: userId,
+          email: email,
+          first_name: fname,
+          last_name: lname,
+          career_id: careerID,
+          role: currentRole,
+          target_roles: currentRole === 'candidate' ? selectedFields : null,
+          created_at: new Date(),
+        }]);
+
+      if (dbError) throw dbError;
+
+      document.getElementById('new-uid').innerText = careerID;
+      closeModal('modal-register');
+      openModal('modal-success');
+      showNotif('Account created successfully!', 'success');
+    } catch (error) {
+      console.error('Registration error:', error);
+      showNotif('Registration failed: ' + error.message, 'error');
+    }
+  }
+
+  // ━━━ LOGIN ━━━
+  async function doLogin(role) {
+    const emailInput = role === 'candidate' 
+      ? document.getElementById('login-email').value.trim()
+      : document.getElementById('emp-email').value.trim();
+    const passInput = role === 'candidate'
+      ? document.getElementById('login-pass').value.trim()
+      : document.getElementById('emp-pass').value.trim();
+
+    if (!emailInput || !passInput) {
+      showNotif('Please fill all fields', 'error');
+      return;
+    }
+
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: emailInput,
+        password: passInput,
+      });
+
+      if (error) throw error;
+
+      // Fetch user profile
+      const { data: profile, error: profileError } = await supabaseClient
+        .from('users')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      currentUser = { user: data.user, profile };
+      updateUserDisplay(profile);
+      closeModal('modal-login');
+      closeModal('modal-employer-login');
+      enterApp(role);
+      showNotif('Signed in successfully!', 'success');
+    } catch (error) {
+      console.error('Login error:', error);
+      showNotif('Login failed: ' + error.message, 'error');
+    }
+  }
+
+  // ━━━ UI HELPERS ━━━
+  function updateUserDisplay(profile) {
+    if (!profile) return;
+    const initials = (profile.first_name[0] + profile.last_name[0]).toUpperCase();
+    document.getElementById('user-avatar').innerText = initials;
+    document.getElementById('user-name').innerText = profile.first_name + ' ' + profile.last_name;
+    document.getElementById('user-id').innerText = profile.career_id;
+    
+    document.getElementById('portfolio-avatar').innerText = initials;
+    document.getElementById('portfolio-name').innerText = profile.first_name + ' ' + profile.last_name;
+    document.getElementById('portfolio-cis').innerText = profile.career_id;
   }
 
   function enterApp(role) {
@@ -622,10 +721,20 @@
     }
   }
 
-  function logout() {
-    document.getElementById('app').style.display = 'none';
-    document.getElementById('landing').style.display = 'flex';
-    selectedFields = [];
+  async function logout() {
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
+      
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('landing').style.display = 'flex';
+      currentUser = null;
+      selectedFields = [];
+      showNotif('Signed out successfully', 'success');
+    } catch (error) {
+      console.error('Logout error:', error);
+      showNotif('Logout failed', 'error');
+    }
   }
 
   function openModal(modalId) {
@@ -643,31 +752,108 @@
     if (navElement) navElement.classList.add('active');
   }
 
-  function addSkill() {
+  // ━━━ PORTFOLIO ━━━
+  async function addSkill() {
     const input = document.getElementById('skill-input');
-    if (input.value.trim()) {
+    const skillName = input.value.trim();
+    
+    if (!skillName) {
+      showNotif('Please enter a skill', 'error');
+      return;
+    }
+
+    if (!currentUser) {
+      showNotif('Please sign in first', 'error');
+      return;
+    }
+
+    try {
+      const { error } = await supabaseClient
+        .from('skills')
+        .insert([{
+          user_id: currentUser.user.id,
+          skill_name: skillName,
+          created_at: new Date(),
+        }]);
+
+      if (error) throw error;
+
       const tag = document.createElement('span');
       tag.className = 'tag tag-green';
-      tag.innerText = input.value.trim();
+      tag.innerText = skillName;
       document.getElementById('skills-list').appendChild(tag);
       input.value = '';
+      showNotif('Skill added successfully!', 'success');
+    } catch (error) {
+      console.error('Add skill error:', error);
+      showNotif('Failed to add skill', 'error');
     }
   }
 
-  function handleFileSelect(event) {
+  async function handleFileSelect(event) {
     const file = event.target.files[0];
-    if (file) {
-      showNotif('Resume uploaded: ' + file.name);
+    if (!file) return;
+
+    if (!currentUser) {
+      showNotif('Please sign in first', 'error');
+      return;
+    }
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${currentUser.user.id}-${Date.now()}.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabaseClient.storage
+        .from('resumes')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      // Store resume metadata
+      const { error: dbError } = await supabaseClient
+        .from('resumes')
+        .insert([{
+          user_id: currentUser.user.id,
+          file_name: file.name,
+          file_path: fileName,
+          uploaded_at: new Date(),
+        }]);
+
+      if (dbError) throw dbError;
+
+      showNotif('Resume uploaded: ' + file.name, 'success');
+    } catch (error) {
+      console.error('Resume upload error:', error);
+      showNotif('Failed to upload resume', 'error');
     }
   }
 
-  function showNotif(message) {
+  function showNotif(message, type = 'success') {
     const notif = document.createElement('div');
-    notif.className = 'notif notif-green';
-    notif.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> <span>${message}</span>`;
+    notif.className = `notif notif-${type}`;
+    notif.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> <span>${message}</span>`;
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
   }
+
+  // ━━━ INIT ━━━
+  window.addEventListener('load', async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      const { data: profile } = await supabaseClient
+        .from('users')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (profile) {
+        currentUser = { user: session.user, profile };
+        updateUserDisplay(profile);
+        enterApp(profile.role);
+      }
+    }
+  });
 </script>
 
 </body>
