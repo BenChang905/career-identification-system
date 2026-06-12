@@ -243,6 +243,325 @@ input, textarea, select { font-family: inherit; }
   const SUPABASE_KEY = 'sb_publishable_3yI-rX7V02zS9Pidcc8vDw_N5TSz3J9'
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 </script>
+<script>
+  let currentRole = 'candidate';
+  let selectedFields = [];
+
+  function selectRole(role) {
+    currentRole = role;
+    document.getElementById('role-candidate').classList.remove('active');
+    document.getElementById('role-employer').classList.remove('active');
+    document.getElementById('role-' + role).classList.add('active');
+    
+    const fieldSection = document.getElementById('field-section');
+    fieldSection.style.display = role === 'candidate' ? 'block' : 'none';
+  }
+
+  function toggleField(el) {
+    const field = el.dataset.field;
+    if (el.classList.contains('selected')) {
+      el.classList.remove('selected');
+      selectedFields = selectedFields.filter(f => f !== field);
+    } else {
+      if (selectedFields.length < 2) {
+        el.classList.add('selected');
+        selectedFields.push(field);
+      }
+    }
+  }
+
+  async function doRegister() {
+    const fname = document.getElementById('reg-fname').value.trim();
+    const lname = document.getElementById('reg-lname').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-pass').value.trim();
+
+    if (!fname || !lname || !email || !password) {
+      alert('Please fill all fields');
+      return;
+    }
+
+    if (currentRole === 'candidate' && selectedFields.length === 0) {
+      alert('Please select at least one role');
+      return;
+    }
+
+    try {
+      // Step 1: Sign up user in Supabase Auth
+      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password
+      });
+
+      if (authError) throw authError;
+
+      const userId = authData.user.id;
+
+      // Step 2: Generate Career ID
+      const careerID = 'CIS-' + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000);
+
+      if (currentRole === 'candidate') {
+        // Step 3: Insert into candidates table
+        const { error: insertError } = await supabaseClient
+          .from('candidates')
+          .insert([{
+            id: userId,
+            career_id: careerID,
+            full_name: fname + ' ' + lname,
+            email: email,
+            role: selectedFields[0],
+            created_at: new Date().toISOString()
+          }]);
+
+        if (insertError) throw insertError;
+
+      } else if (currentRole === 'employer') {
+        // Step 3: Insert into employers table
+        const { error: insertError } = await supabaseClient
+          .from('employers')
+          .insert([{
+            id: userId,
+            company_name: fname,
+            email: email,
+            created_at: new Date().toISOString()
+          }]);
+
+        if (insertError) throw insertError;
+      }
+
+      // Step 4: Show success modal with Career ID
+      document.getElementById('new-uid').innerText = careerID;
+      closeModal('modal-register');
+      openModal('modal-success');
+      
+    } catch (error) {
+      alert('Error: ' + error.message);
+      console.error(error);
+    }
+  }
+
+  function enterApp(role) {
+    closeModal('modal-success');
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    currentRole = role;
+    
+    if (role === 'employer') {
+      document.getElementById('nav-candidate').style.display = 'none';
+      document.getElementById('nav-employer').style.display = 'block';
+      showPage('emp-dashboard', document.querySelector('#nav-employer .sb-item'));
+    } else {
+      document.getElementById('nav-candidate').style.display = 'block';
+      document.getElementById('nav-employer').style.display = 'none';
+      showPage('dashboard', document.querySelector('#nav-candidate .sb-item'));
+    }
+  }
+
+  function logout() {
+    supabaseClient.auth.signOut();
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('landing').style.display = 'flex';
+    selectedFields = [];
+  }
+
+  function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+  }
+
+  function showPage(pageId, navElement) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    document.querySelectorAll('.sb-item').forEach(item => item.classList.remove('active'));
+    if (navElement) navElement.classList.add('active');
+  }
+
+  function addAchievement() {
+    const input = document.getElementById('acad-input');
+    if (input.value.trim()) {
+      const tag = document.createElement('span');
+      tag.className = 'tag tag-green';
+      tag.innerText = input.value.trim();
+      document.getElementById('acad-tags').appendChild(tag);
+      input.value = '';
+    }
+  }
+
+  function addSkill() {
+    const input = document.getElementById('skill-input');
+    const level = document.getElementById('skill-level').value;
+    if (input.value.trim()) {
+      const tag = document.createElement('span');
+      tag.className = 'tag tag-' + (level === 'default' ? '' : level);
+      tag.innerText = input.value.trim();
+      document.getElementById('skills-list').appendChild(tag);
+      input.value = '';
+    }
+  }
+
+  function addCert() {
+    const input = document.getElementById('cert-input');
+    if (input.value.trim()) {
+      const tag = document.createElement('span');
+      tag.className = 'tag tag-amber';
+      tag.innerText = input.value.trim();
+      document.getElementById('cert-tags').appendChild(tag);
+      input.value = '';
+    }
+  }
+
+  function addProject() {
+    const title = document.getElementById('proj-title').value.trim();
+    const tech = document.getElementById('proj-tech').value.trim();
+    const desc = document.getElementById('proj-desc').value.trim();
+    
+    if (!title || !tech || !desc) {
+      alert('Fill all project fields');
+      return;
+    }
+    
+    const projectHTML = `
+      <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">${title}</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:8px;">${desc}</div>
+        <div>${tech.split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('')}</div>
+      </div>
+    `;
+    
+    document.getElementById('user-projects').insertAdjacentHTML('beforeend', projectHTML);
+    document.getElementById('add-project-form').style.display = 'none';
+    document.getElementById('proj-title').value = '';
+    document.getElementById('proj-tech').value = '';
+    document.getElementById('proj-desc').value = '';
+  }
+
+  function addWork() {
+    const title = document.getElementById('work-title').value.trim();
+    const company = document.getElementById('work-company').value.trim();
+    const start = document.getElementById('work-start').value.trim();
+    const end = document.getElementById('work-end').value.trim();
+    const desc = document.getElementById('work-desc').value.trim();
+    
+    if (!title || !company || !start || !end || !desc) {
+      alert('Fill all work fields');
+      return;
+    }
+    
+    const workHTML = `
+      <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+          <div style="font-size:13px;font-weight:600;">${title}</div>
+          <span style="font-size:11px;color:var(--text-3);">${start} – ${end}</span>
+        </div>
+        <div style="font-size:12px;font-weight:500;color:var(--green-dark);margin-bottom:6px;">${company}</div>
+        <div style="font-size:12px;color:var(--text-2);">${desc}</div>
+      </div>
+    `;
+    
+    document.getElementById('user-work').insertAdjacentHTML('beforeend', workHTML);
+    document.getElementById('add-work-form').style.display = 'none';
+    document.getElementById('work-title').value = '';
+    document.getElementById('work-company').value = '';
+    document.getElementById('work-start').value = '';
+    document.getElementById('work-end').value = '';
+    document.getElementById('work-desc').value = '';
+  }
+
+  function addCocurric() {
+    const title = document.getElementById('cocurric-title').value.trim();
+    const desc = document.getElementById('cocurric-desc').value.trim();
+    
+    if (!title || !desc) {
+      alert('Fill all fields');
+      return;
+    }
+    
+    const itemHTML = `
+      <div class="cocurric-item" style="padding:8px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:500;">${title}</div>
+        <div style="font-size:12px;color:var(--text-2);">${desc}</div>
+      </div>
+    `;
+    
+    document.getElementById('cocurric-list').insertAdjacentHTML('beforeend', itemHTML);
+    document.getElementById('cocurric-title').value = '';
+    document.getElementById('cocurric-desc').value = '';
+  }
+
+  function showNotif(message) {
+    const notif = document.createElement('div');
+    notif.className = 'notif notif-green';
+    notif.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> <span>${message}</span>`;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+  }
+
+  function updateSalary(val) {
+    document.getElementById('salary-display').innerText = 'RM ' + parseInt(val).toLocaleString();
+  }
+
+  function togglePtag(el) {
+    el.classList.toggle('selected');
+  }
+
+  function filterJobs(query) {
+    const cards = document.querySelectorAll('#job-cards .card');
+    cards.forEach(card => {
+      const text = card.innerText.toLowerCase();
+      card.style.display = text.includes(query.toLowerCase()) ? 'block' : 'none';
+    });
+  }
+
+  function runFairPay() {
+    const role = document.getElementById('fp-role').value.trim();
+    if (!role) {
+      alert('Enter a role');
+      return;
+    }
+    document.getElementById('fp-placeholder').style.display = 'none';
+    document.getElementById('fp-output').style.display = 'block';
+  }
+
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+      document.getElementById('file-name-display').innerText = file.name;
+      document.getElementById('file-status').style.display = 'block';
+    }
+  }
+
+  function analyzeResume() {
+    document.getElementById('file-status').style.display = 'none';
+    document.getElementById('ai-loading').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('ai-loading').style.display = 'none';
+      document.getElementById('ai-result').style.display = 'block';
+      document.getElementById('ai-result').innerHTML = `
+        <div class="ai-response">
+          <div class="ai-response-header">
+            <div class="ai-dot"></div>
+            <div class="ai-response-title">Resume Analysis Complete</div>
+          </div>
+          <div class="ai-response-body">
+            <strong>Extracted Skills:</strong> Python, SQL, Data Analysis, Power BI, Machine Learning<br><br>
+            <strong>Recommendations:</strong> Consider adding cloud certifications to increase match rates.
+          </div>
+        </div>
+      `;
+      document.getElementById('extracted-skills-card').style.display = 'block';
+      document.getElementById('extracted-tags').innerHTML = `
+        <span class="tag tag-green">Python</span>
+        <span class="tag tag-green">SQL</span>
+        <span class="tag tag-green">Data Analysis</span>
+        <span class="tag tag-blue">Power BI</span>
+        <span class="tag tag-blue">Machine Learning</span>
+      `;
+    }, 2000);
+  }
+</script>
 </head>
 <body>
 
